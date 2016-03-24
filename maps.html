@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" />
+<title>Maps of Stanford</title>
+<style>
+
+</style>
+</head>
+
+<body id="htmlbody" onload="resizing();">
+	<!-- <table>
+		<tr>
+			<td> -->
+                 <div id="map_frame" style="border: solid #990000 10px; position:absolute; overflow: hidden; width:800px; height:600px; top:10px; left:10px; float:left;" >
+                 	<!-- <div style="position:absolute;"> -->
+                        <img id="image" src="map-s.gif" style="position: absolute; left: 0px; top: 0px; width:1283px; height:997px;"></img>
+                    <!-- </div> -->
+                 </div>
+            <!-- </td>
+            <td> -->
+                 <div style="float:left; position: relative; left:820px; top:20px;">
+                 	<table>
+                 		<tr>
+                 			<td></td>
+      	           <td><input class="but" type="button" value=" ^ " onclick="scrollUp();" /></td>
+      	           <td></td>
+      	           <tr>
+      	           	<td>
+      	           <input class="but" type="button" value=" < " onclick="scrollLft();" />
+      	           </td>
+      	           <td></td>
+      	           <td>
+      	           <input class="but" type="button" value=" > " onclick="scrollRight();" />
+      	           <td/>
+      	           <tr>
+      	           	<td></td>
+      	           	<td>
+      	           <input class="but" type="button" value=" v " onclick="scrollDown();" />
+      	           </td>
+      	           <td></td>
+      	           
+      	           </table>
+      	           <table style="margin:14px;">
+      	           	<tr>
+      	           		<td>
+      	           <input class="zoom" type="button" value=" + " onclick="zoomin();" />
+      	               </td>
+      	               <td>
+      	           <input class="zoom" type="button" value=" - " onclick="zoomout();" />
+      	               </td>
+
+
+                 </table>
+                </div>
+            <!-- </td>
+        </tr>
+    </table> -->
+ 
+  
+  
+<script>
+
+    window.addEventListener("resize", resizing, false);
+
+     function resizing(){
+     	var frame = document.getElementById("map_frame");
+ 	    var width= window.innerWidth;
+ 	    var height= window.innerHeight;
+
+ 	    frame.style.width= parseInt(width)-600 + "px";
+ 	    frame.style.height= parseInt(height)-100 + "px";
+          }
+
+
+/// INFORMATION RETRIEVAL FUNCTIONS
+function getImageHeight() {
+	var box = document.getElementById("image");
+	return parseInt(box.style.height);
+}
+
+function getImageWidth() {
+	var box = document.getElementById("image");
+	return parseInt(box.style.width);
+}
+
+function getImageTop() {
+	var box = document.getElementById("image");
+	return parseInt(box.style.top);
+}
+
+function getImageLeft() {
+	var box = document.getElementById("image");
+	return parseInt(box.style.left);
+}
+
+function inImage(x,y) {
+	return (x >= getImageLeft() && x <= getImageLeft() + getImageWidth()
+				&& y >= getImageTop() && y <= getImageTop() + getImageHeight());
+}
+
+function FrameWidth(){
+var dclick = document.getElementById("map_frame");
+return(parseInt(dclick.style.width));
+}
+
+function FrameHeight(){
+var dclick = document.getElementById("map_frame");
+return(parseInt(dclick.style.height));
+}
+
+/// DRAGGING FUNCTIONS
+
+var isDragging= false;
+var MouseDownX=0;
+var MouseDownY=0;
+var oldlft = 0;
+// var doldlft=0;
+var oldtop = 0;
+// var doldtop= 0;
+// cite: Prafull Sharma for perfection in dragging operation
+function handleMouseDown(evt) {
+	document.getElementById("htmlbody").style.cursor = "move";
+	 evt.preventDefault(); 	
+	if (inImage(evt.clientX,evt.clientY)) {
+		var map= document.getElementById("image");
+		oldlft = parseInt(map.style.left);
+		oldtop = parseInt(map.style.top);
+        MouseDownX= evt.clientX;
+        MouseDownY= evt.clientY;
+		isDragging = true;
+		
+	}
+}
+
+
+
+function handleMouseUp(evt) {
+	document.getElementById("htmlbody").style.cursor = "auto";
+	if (isDragging) {
+		// var box = document.getElementById("image");
+		// box.style.left =  -MouseDownX + evt.clientX + "px";
+		// box.style.top = -MouseDownY + evt.clientY+ "px";
+        isDragging = false;		
+	}
+}
+
+function handleMouseMove(evt) {
+	evt.preventDefault();
+	
+	if (isDragging) {
+		var box = document.getElementById("image");
+		box.style.left = oldlft -MouseDownX + evt.clientX + "px";
+		box.style.top = oldtop -MouseDownY + evt.clientY+ "px";
+	}
+		
+}
+
+//Double click function
+
+function handleDoubleClick(evt){
+	document.getElementById("htmlbody").style.cursor = "auto";
+	// console.log("Double clicking Yo!");
+	evt.preventDefault();
+
+	if (inImage(evt.clientX,evt.clientY)){
+		// console.log("I'm double inside hehe!");
+		var map= document.getElementById("image");
+		var doldlft = parseInt(map.style.left);
+		var doldtop = parseInt(map.style.top);
+		var MidX =  10 + FrameWidth()/2;
+		var MidY =  10 + FrameHeight()/2;
+		var a = map.style.left;
+		var b = - evt.clientX + MidX+ doldlft;
+		console.log(b);
+		 map.style.left = b + "px";
+		 var c = map.style.top;
+		 var d = -evt.clientY + MidY+ doldtop;
+		 map.style.top = d  + "px";
+	}
+}
+
+///SCROLLING FUNCTIONS
+
+function scrollUp(){
+	var map = document.getElementById("image");
+	var up_px = FrameHeight()/2;
+	var old = parseInt(map.style.top);
+	map.style.top= oldlft - up_px + "px";
+}
+
+function scrollDown(){
+	var map = document.getElementById("image");
+	var down_px = FrameHeight()/2;
+	var old = parseInt(map.style.top);
+	map.style.top= oldlft + down_px + "px";
+	}
+
+function scrollRight(){
+	var map = document.getElementById("image");
+	var rght_px = FrameWidth()/2;
+	var old = parseInt(map.style.left);
+	map.style.left= oldlft + rght_px + "px";
+}
+
+function scrollLft(){
+	var map = document.getElementById("image");
+	var lft_px = FrameWidth()/2;
+	var old = parseInt(map.style.left);
+	map.style.left= oldlft - lft_px + "px";
+}
+
+//ZOOMING FUNCTIONS
+
+function zoomin(evt){
+   var left_map = parseFloat(document.getElementById("image").style.left);
+   var top_map = parseFloat(document.getElementById("image").style.top);
+   var img_width = parseFloat(document.getElementById("image").style.width);
+   var img_height = parseFloat(document.getElementById("image").style.height);
+
+   var new_img;
+   var new_width;
+   var new_height;
+   if (img_width == 1283) { 
+   	new_img = "map-m.gif";
+   	img_width = 1283;
+   	img_height = 997;
+   	new_width= 2047;
+   	new_height= 1589;
+    }
+   else if(img_width == 2047) { 
+   	new_img = "map-l.gif";
+   	img_width = 2047;
+   	img_height = 1589;
+    new_width = 3063;
+    new_height = 2373;
+    }
+   else if(img_width == 3063) { 
+   	new_img = "map-xl.gif";
+   	img_width = 3063;
+   	img_height = 2373;
+    new_width = 4084;
+    new_height = 3164;
+    }
+   else { 
+   	alert("Oops! Maximum zoomed in");
+    return;
+    }
+
+   var x_perc = (new_width/img_width);
+   var y_perc = (new_height/img_height);
+
+   document.getElementById("image").src = new_img ;
+   var width = document.getElementById("image");
+   width.setAttribute("width", 2047 + "px");
+
+   document.getElementById("image").style.width = new_width + "px";
+   document.getElementById("image").style.height = new_height + "px";
+   
+   document.getElementById("image").style.left = (parseFloat(left_map) - FrameWidth()/2) * x_perc + FrameWidth()/2 + "px";
+   
+   document.getElementById("image").style.top = (parseFloat(top_map) - FrameHeight()/2) *y_perc + FrameHeight()/2  + "px";
+  
+
+
+   
+}
+
+function zoomout(evt){
+var left_map = parseFloat(document.getElementById("image").style.left);
+   var top_map = parseFloat(document.getElementById("image").style.top);
+   var img_width = parseFloat(document.getElementById("image").style.width);
+   var img_height = parseFloat(document.getElementById("image").style.height);
+
+   var new_img;
+   var new_width;
+   var new_height;
+   if (img_width == 3063) { 
+   	new_img = "map-m.gif";
+   	img_width = 3063;
+   	img_height = 2373;
+   	new_width= 2047;
+   	new_height= 1589;
+    }
+   else if(img_width == 4084) { 
+   	new_img = "map-l.gif";
+   	img_width = 4084;
+   	img_height = 3164;
+    new_width = 3063;
+    new_height = 2373;
+    }
+   else if(img_width == 2047) { 
+   	new_img = "map-s.gif";
+   	img_width = 2047;
+   	img_height = 1589;
+    new_width = 1283;
+    new_height = 997;
+    }
+   else { 
+   	alert("Oops! Maximum zoomed in");
+    return;
+    }
+
+   var x_perc = (new_width/img_width);
+   var y_perc = (new_height/img_height);
+ 
+   document.getElementById("image").src = new_img ;
+   var width = document.getElementById("image");
+   width.setAttribute("width", 2047 + "px");
+
+   document.getElementById("image").style.width = new_width + "px";
+   document.getElementById("image").style.height = new_height + "px";
+   
+   document.getElementById("image").style.left = (parseFloat(left_map) - FrameWidth()/2) * x_perc + FrameWidth()/2 + "px";
+   
+   document.getElementById("image").style.top = (parseFloat(top_map) - FrameHeight()/2) *y_perc + FrameHeight()/2  + "px";
+
+
+   
+}
+
+/// SETUP FUNCTIONS
+
+document.addEventListener("mousedown",handleMouseDown,false);
+document.addEventListener("mouseup",handleMouseUp,false);
+document.addEventListener("mousemove",handleMouseMove,false);
+document.addEventListener("dblclick", handleDoubleClick,false);
+
+</script>
+</body>
+</html>
